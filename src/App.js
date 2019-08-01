@@ -1,26 +1,57 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import fantasyBooks from './data/fantasy.json';
+import BookList from './components/BookList';
+import SearchNav from './components/SearchNav';
+import { Badge, Button } from "reactstrap"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  constructor(params) {
+    super(params)
+
+    this.state = {
+      filterValue: "",
+      pageIndex: 0
+    }
+  }
+
+  search = (value) => { //ASSIGN THE STATE
+    this.setState({ filterValue: value });
+  }
+
+  nextPage = () => {
+    var pageIndex = this.state.pageIndex;
+    this.setState({
+      pageIndex: pageIndex + 20
+    })
+  }
+
+  prevPage = () => {
+    var pageIndex = this.state.pageIndex;
+    this.setState({
+      pageIndex: pageIndex - 20
+    })
+  }
+
+  render() {
+    return (
+      <div className="App">
+
+        <SearchNav handleSearch={this.search} ></SearchNav>
+        {/* Filtering on the state value */}
+        <Button onClick={this.prevPage} disabled={this.state.pageIndex === 0} >-</Button>
+        <Badge color="primary" pill>{fantasyBooks.filter(book => book.title.includes(this.state.filterValue)).length}</Badge>
+        <Badge color="success" pill>{this.state.pageIndex}</Badge>
+        <Button onClick={this.nextPage} >+</Button>
+        <BookList books={fantasyBooks
+          .filter(book => book.title.includes(this.state.filterValue))
+          .splice(this.state.pageIndex, 20)
+        } />
+      </div>
+    );
+  }
 }
 
 export default App;
