@@ -38,8 +38,6 @@ class App extends React.Component {
   }
 
   handleBookClick = async (book) => {
-    book.price = 123;
-
     this.setState({ selectedBook: book, isLoading: true })
 
     var response = await fetch("http://strive-school-testing-apis.herokuapp.com/api/comments/" + book.asin, {
