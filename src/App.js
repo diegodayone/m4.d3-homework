@@ -1,10 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import fantasyBooks from './data/fantasy.json';
 import BookList from './components/BookList';
 import SearchNav from './components/SearchNav';
 import { Badge, Button } from "reactstrap"
+import Comments from './components/Comments';
 
 class App extends React.Component {
 
@@ -13,7 +13,9 @@ class App extends React.Component {
 
     this.state = {
       filterValue: "",
-      pageIndex: 0
+      pageIndex: 0,
+      selectedBook: null,
+      isLoading: false
     }
   }
 
@@ -35,6 +37,27 @@ class App extends React.Component {
     })
   }
 
+  handleBookClick = async (book) => {
+    book.price = 123;
+
+    this.setState({ selectedBook: book, isLoading: true })
+
+    var response = await fetch("http://strive-school-testing-apis.herokuapp.com/api/comments/" + book.asin, {
+      headers: {
+        "Authorization": "Basic dXNlcjc6M1VVNWRZRnZlblJ1UlA3RQ=="
+      }
+    });
+
+    var comments = await response.json();
+    this.setState({ comments: comments, isLoading: false });
+  }
+
+  handleNewComment = (comment) => {
+    var comments = this.state.comments;
+    comments.push(comment);
+    this.setState({ comments: comments });
+  }
+
   render() {
     return (
       <div className="App">
@@ -47,8 +70,12 @@ class App extends React.Component {
         <Button onClick={this.nextPage} >+</Button>
         <BookList books={fantasyBooks
           .filter(book => book.title.includes(this.state.filterValue))
-          .splice(this.state.pageIndex, 20)
-        } />
+          .splice(this.state.pageIndex, 20)}
+          onBookClicked={this.handleBookClick}
+        />
+
+        <Comments comments={this.state.comments} book={this.state.selectedBook} isLoading={this.state.isLoading}
+          handleNewComment={this.handleNewComment} />
       </div>
     );
   }

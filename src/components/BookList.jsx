@@ -6,13 +6,13 @@ class BookList extends React.Component {
   render() {
     var books = this.props.books.map(book => (
       <div key={book.asin} className="col-md-3">
-        <SingleBook book={book} />
+        <SingleBook book={book} onBookClicked={this.props.onBookClicked} />
       </div>
     ));
 
     return (
       <div className="container">
-        <div className="row">{books}</div>
+        <div className="row krysz">{books}</div>
       </div>
     );
   }

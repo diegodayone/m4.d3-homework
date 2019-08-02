@@ -5,7 +5,7 @@ class SingleBook extends React.Component {
   state = {};
   render() {
     return (
-      <Card>
+      <Card onClick={() => this.props.onBookClicked(this.props.book)}>
         <CardImg top width="100%" src={this.props.book.img} alt="Card image cap" />
         <CardBody>
           <CardTitle>{this.props.book.title}</CardTitle>
